@@ -18,7 +18,7 @@ int main()
 	if (!XMVerifyCPUSupport())
 	{
 		cout << "DirectXMath is not supported!" << endl;
-		return 0;
+		return 0;                                                                                                                                                                                                                                                                                                                                                                                                                     
 	}
 
 	XMVECTOR p = XMVectorZero();
