@@ -18,7 +18,7 @@ private:
 	double  m_DeltaTime;
 
 	__int64 m_BaseTime;
-	__int64 m_PauseTime;
+	__int64 m_PausedTime;
 	__int64 m_StopTime;
 	__int64 m_PrevTime;
 	__int64 m_CurrTime;
