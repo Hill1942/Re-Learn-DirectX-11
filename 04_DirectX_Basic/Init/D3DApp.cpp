@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <d3d11_1.h>
 
+#include "GameTimer.h"
 #include "D3DApp.h"
 
 
