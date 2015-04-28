@@ -1,4 +1,7 @@
 #pragma once
+
+#include "D3DUtil.h"
+
 class D3DApp
 {
 public:
@@ -44,7 +47,7 @@ protected:
 	ID3D11Texture2D*        m_DepthStencilBuffer;
 	ID3D11RenderTargetView* m_RenderTargetView;
 	ID3D11DepthStencilView* m_DepthStencilView;
-	D3D11_VIEWPORT          m_SceenViewport;
+	D3D11_VIEWPORT          m_ScreenViewport;
 	
 
 	std::wstring m_MainWndCaption;

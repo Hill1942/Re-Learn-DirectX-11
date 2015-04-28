@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3DApp.h" />
+    <ClInclude Include="D3DUtil.h" />
     <ClInclude Include="GameTimer.h" />
   </ItemGroup>
   <ItemGroup>
