@@ -3,25 +3,37 @@
 
 
 #include <d3d11.h>
-#include <DirectXMath.h>
+#include <DirectXColors.h>
 #include <cassert>
 
+#if defined(DEBUG) | defined(_DEBUG)
+#ifndef HR
+#define HR(x, source)													    \
+	{																\
+		HRESULT hr = (x);											\
+		if(FAILED(hr))												\
+		{															\
+			LPWSTR output;                                          \
+			FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |				\
+						FORMAT_MESSAGE_IGNORE_INSERTS |				\
+						FORMAT_MESSAGE_ALLOCATE_BUFFER,				\
+						NULL,										\
+						hr,											\
+						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),  \
+						(LPTSTR) &output,							\
+						0,											\
+						NULL);										\
+			MessageBox(NULL, output, source, MB_OK);				\
+		}															\
+	}
+#endif
+#else
+	#ifndef HR
+	#define HR(x, source) (x)
+	#endif
+#endif 
 
 #define ReleaseCOM(x) { if (x) { x->Release(); x = 0;} }
 
-namespace Colors
-{
-	XMGLOBALCONST DirectX::XMVECTORF32 White     = {1.0f, 1.0f, 1.0f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 Black     = {0.0f, 0.0f, 0.0f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 Red       = {1.0f, 0.0f, 0.0f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 Green     = {0.0f, 1.0f, 0.0f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 Blue      = {0.0f, 0.0f, 1.0f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 Yellow    = {1.0f, 1.0f, 0.0f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 Cyan      = {0.0f, 1.0f, 1.0f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 Magenta   = {1.0f, 0.0f, 1.0f, 1.0f};
-
-	XMGLOBALCONST DirectX::XMVECTORF32 Silver    = {0.75f, 0.75f, 0.75f, 1.0f};
-	XMGLOBALCONST DirectX::XMVECTORF32 LightSteelBlue = {0.69f, 0.77f, 0.87f, 1.0f};
-}
 
 #endif

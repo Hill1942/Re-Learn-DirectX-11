@@ -1,6 +1,7 @@
 #pragma once
 
 #include "D3DUtil.h"
+#include "GameTimer.h"
 
 class D3DApp
 {
@@ -17,7 +18,7 @@ public:
 	virtual bool Init();
 	virtual void OnResize();
 	virtual void UpdateScene(float dt) = 0;
-	virtual void DrawScene();
+	virtual void DrawScene() = 0;
 	virtual LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	virtual void OnMouseDown(WPARAM btnState, int x, int y);

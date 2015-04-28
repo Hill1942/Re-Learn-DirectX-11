@@ -95,7 +95,7 @@ bool D3DApp::InitDirect3D()
 {
 	UINT createDeviceFlages = 0;
 #if defined(DEBUG) || defined(_DEBUG)
-	createDeviceFlages != D3D11_CREATE_DEVICE_DEBUG;
+	createDeviceFlages |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 	D3D_FEATURE_LEVEL featureLevel;
@@ -148,6 +148,7 @@ bool D3DApp::InitDirect3D()
 	swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swap_chain_desc.BufferCount = 1;
 	swap_chain_desc.OutputWindow = m_hMainWnd;
+	swap_chain_desc.Windowed    = true;
 	swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swap_chain_desc.Flags = 0;
 
@@ -243,7 +244,7 @@ bool D3DApp::InitMainWindow()
 	ShowWindow(m_hMainWnd, SW_SHOW);
 	UpdateWindow(m_hMainWnd);
 
-	return false;
+	return true;
 }
 
 void D3DApp::OnResize()
@@ -486,6 +487,18 @@ void D3DApp::CalculateFrameStats()
 	}
 }
 
+void D3DApp::OnMouseDown(WPARAM btnState, int x, int y)
+{
+	
+}
+void D3DApp::OnMouseUp(WPARAM btnState, int x, int y)
+{
+	
+}
+void D3DApp::OnMouseMove(WPARAM btnState, int x, int y)
+{
+	
+}
 
 
 
