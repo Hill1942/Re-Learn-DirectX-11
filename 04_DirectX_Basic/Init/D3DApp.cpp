@@ -34,6 +34,7 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	 m_Enable4xMsaa(false)
 {
 	ZeroMemory(&m_ScreenViewport, sizeof(D3D11_VIEWPORT));
+	g_d3dApp = this;
 }
 
 D3DApp::~D3DApp(void)
@@ -57,6 +58,37 @@ bool D3DApp::Init()
 	if (!InitDirect3D)
 		return false;
 	return true;
+}
+
+int D3DApp::Run()
+{
+	MSG msg = {0};
+	m_Timer.Reset();
+
+	while (msg.message != WM_QUIT)
+	{
+		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
+		{
+			m_Timer.Tick();
+			if (!m_bAppPaused)
+			{
+				CalculateFrameStats();
+				UpdateScene(m_Timer.DeltaTime());
+				DrawScene();
+			}
+			else
+			{
+				Sleep(100);
+			}
+		}
+	}
+
+	return (int)msg.wParam;
 }
 
 bool D3DApp::InitDirect3D()
