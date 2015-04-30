@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 #include "D3DUtil.h"
 #include "GameTimer.h"
