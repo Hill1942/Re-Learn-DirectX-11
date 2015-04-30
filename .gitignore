@@ -1,6 +1,8 @@
 *.opensdf
 *.sdf
 *.suo
+*.vcxproj.user
+*.cso
 
 */Debug
 */*/Debug
