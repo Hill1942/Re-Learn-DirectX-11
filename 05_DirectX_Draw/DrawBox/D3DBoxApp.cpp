@@ -1,3 +1,4 @@
+#include "MathHelper.h"
 #include "ShaderHelper.h"
 #include "ConstantBuffer.h"
 #include "D3DBoxApp.h"
@@ -112,15 +113,37 @@ void D3DBoxApp::DrawScene()
 
 void D3DBoxApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
-	
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
+	SetCapture(m_hMainWnd);
 }
 void D3DBoxApp::OnMouseUp(WPARAM btnState, int x, int y)
 {
-	
+	ReleaseCapture();
 }
 void D3DBoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	
+	if ((btnState & MK_LBUTTON) != 0)
+	{
+		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));	
+		
+		mTheta += dx;
+		mPhi   += dy;
+
+		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::PI - 0.1f);
+	}
+	else if ((btnState & MK_RBUTTON) != 0)
+	{
+		float dx = 0.005f * static_cast<float>(x - mLastMousePos.x);
+		float dy = 0.005f * static_cast<float>(y - mLastMousePos.y);
+
+		mRadius += dx - dy;
+		mRadius = MathHelper::Clamp(mRadius, 3.0f, 15.0f);
+	}
+
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
 }
 
 void D3DBoxApp::BuildGemetryBuffers()
