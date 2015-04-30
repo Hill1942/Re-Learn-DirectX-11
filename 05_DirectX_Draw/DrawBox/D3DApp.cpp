@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include <vector>
 #include <Windowsx.h>
 #include <d3d11_1.h>
 
@@ -98,22 +99,57 @@ bool D3DApp::InitDirect3D()
 	createDeviceFlages |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	D3D_FEATURE_LEVEL featureLevel;
+	IDXGIFactory * pFactory;
+	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory) );
 
-	if (FAILED(D3D11CreateDevice(
-		0,
-		m_d3dDriverType,
-		0,
-		createDeviceFlages,
-		0,
-		0,
-		D3D11_SDK_VERSION,
-		&m_d3dDevice,
-		&featureLevel,
-		&m_d3dImmediateContext)))
+	UINT i = 0; 
+	IDXGIAdapter * pAdapter; 
+	std::vector <IDXGIAdapter*> vAdapters; 
+	while(pFactory->EnumAdapters(i, &pAdapter) != DXGI_ERROR_NOT_FOUND) 
+	{ 
+		vAdapters.push_back(pAdapter); 
+		++i; 
+	}
+
+	const D3D_FEATURE_LEVEL feature_levels[] = {
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+		D3D_FEATURE_LEVEL_9_2,
+		D3D_FEATURE_LEVEL_9_1,
+	};
+	D3D_FEATURE_LEVEL max_feature_level;
+	unsigned level_count = sizeof(feature_levels) / sizeof(feature_levels[0]);
+	for (int k = 0; k < vAdapters.size(); k++)
 	{
-		MessageBox(0, L"D3D11CreateDevice Failed", 0, 0);
-		return false;
+		HR(D3D11CreateDevice(
+			vAdapters[k],
+			D3D_DRIVER_TYPE_UNKNOWN,
+			0,
+			createDeviceFlages,
+			feature_levels,
+			level_count,
+			D3D11_SDK_VERSION,
+			&m_d3dDevice,
+			&max_feature_level,
+			&m_d3dImmediateContext),
+			L"CreateD3DDevice");
+
+		if (max_feature_level == D3D_FEATURE_LEVEL_11_0 || max_feature_level == D3D_FEATURE_LEVEL_11_1)
+			break;
+
+		if (k == vAdapters.size() - 1)
+		{
+			MessageBox(0, L"Your system does not support DirextX11", 0, 0);
+			ReleaseCOM(m_d3dDevice);
+			ReleaseCOM(m_d3dImmediateContext);
+			return false;
+		}
+
+		ReleaseCOM(m_d3dDevice);
+		ReleaseCOM(m_d3dImmediateContext);
 	}
 
 	if (FAILED(m_d3dDevice->CheckMultisampleQualityLevels(
