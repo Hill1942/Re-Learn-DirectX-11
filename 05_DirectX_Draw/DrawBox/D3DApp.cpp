@@ -100,7 +100,7 @@ bool D3DApp::InitDirect3D()
 #endif
 
 	IDXGIFactory * pFactory;
-	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory) );
+	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
 
 	UINT i = 0; 
 	IDXGIAdapter * pAdapter; 
@@ -137,7 +137,8 @@ bool D3DApp::InitDirect3D()
 			&m_d3dImmediateContext),
 			L"CreateD3DDevice");
 
-		if (max_feature_level == D3D_FEATURE_LEVEL_11_0 || max_feature_level == D3D_FEATURE_LEVEL_11_1)
+		if (max_feature_level == D3D_FEATURE_LEVEL_11_0 || 
+			max_feature_level == D3D_FEATURE_LEVEL_11_1)
 			break;
 
 		if (k == vAdapters.size() - 1)
