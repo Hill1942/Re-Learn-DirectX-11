@@ -128,8 +128,8 @@ void D3DBoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mLastMousePos.y));	
 		
-		mTheta += dx;
-		mPhi   += dy;
+		mTheta -= dx;
+		mPhi   -= dy;
 
 		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::PI - 0.1f);
 	}
@@ -138,7 +138,7 @@ void D3DBoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 		float dx = 0.005f * static_cast<float>(x - mLastMousePos.x);
 		float dy = 0.005f * static_cast<float>(y - mLastMousePos.y);
 
-		mRadius += dx - dy;
+		mRadius -= dx - dy;
 		mRadius = MathHelper::Clamp(mRadius, 3.0f, 15.0f);
 	}
 
