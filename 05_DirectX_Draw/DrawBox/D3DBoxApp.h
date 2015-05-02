@@ -14,11 +14,11 @@ struct CBPerspectiveObject
 	DirectX::XMFLOAT4X4 mWorldViewProj;
 };
 
-class D3DBoxApp: public D3DApp
+class D3DHillApp: public D3DApp
 {
 public:
-	D3DBoxApp(HINSTANCE hInstance);
-	~D3DBoxApp(void);
+	D3DHillApp(HINSTANCE hInstance);
+	~D3DHillApp(void);
 
 	bool Init() override;
 	void OnResize() override;
@@ -37,7 +37,7 @@ private:
 
 private:
 	ConstantBuffer<CBPerspectiveObject> mCBObject;
-	ID3D11Buffer*          mBoxVB;
+	ID3D11Buffer*          mHillVB;
 	ID3D11Buffer*          mBoxIB;
 	ID3DBlob*              mPSBlob;
 	ID3DBlob*              mVSBlob;

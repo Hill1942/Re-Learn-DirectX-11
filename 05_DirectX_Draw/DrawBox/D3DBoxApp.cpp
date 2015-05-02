@@ -1,10 +1,10 @@
 #include "MathHelper.h"
 #include "ShaderHelper.h"
 #include "ConstantBuffer.h"
-#include "D3DBoxApp.h"
+#include "D3DHillApp.h"
 
 
-D3DBoxApp::D3DBoxApp(HINSTANCE hInstance)
+D3DHillApp::D3DHillApp(HINSTANCE hInstance)
 	:D3DApp(hInstance),
 	 mBoxIB(0),
 	 mBoxVB(0),
@@ -13,7 +13,7 @@ D3DBoxApp::D3DBoxApp(HINSTANCE hInstance)
 	 mPhi(0.25f * 3.34f),
 	 mRadius(5.0f)
 {
-	m_MainWndCaption = L"D3DBoxApp";
+	m_MainWndCaption = L"D3DHillApp";
 
 	DirectX::XMMATRIX I = DirectX::XMMatrixIdentity();
 	XMStoreFloat4x4(&mWorld, I);
@@ -22,7 +22,7 @@ D3DBoxApp::D3DBoxApp(HINSTANCE hInstance)
 }
 
 
-D3DBoxApp::~D3DBoxApp(void)
+D3DHillApp::~D3DHillApp(void)
 {
 	ReleaseCOM(mBoxVB);
 	ReleaseCOM(mBoxIB);
@@ -31,7 +31,7 @@ D3DBoxApp::~D3DBoxApp(void)
 	ReleaseCOM(mVSBlob);
 }
 
-bool D3DBoxApp::Init()
+bool D3DHillApp::Init()
 {
 	if (!D3DApp::Init())
 		return false;
@@ -45,7 +45,7 @@ bool D3DBoxApp::Init()
 	return true;
 }
 
-void D3DBoxApp::OnResize()
+void D3DHillApp::OnResize()
 {
 	D3DApp::OnResize();
 	DirectX::XMMATRIX p = DirectX::XMMatrixPerspectiveFovLH(
@@ -57,7 +57,7 @@ void D3DBoxApp::OnResize()
 	XMStoreFloat4x4(&mProj, p);
 }
 
-void D3DBoxApp::UpdateScene(float dt)
+void D3DHillApp::UpdateScene(float dt)
 {
 	float x = mRadius * sinf(mPhi) * cosf(mTheta);
 	float z = mRadius * sinf(mPhi) * sinf(mTheta);
@@ -71,7 +71,7 @@ void D3DBoxApp::UpdateScene(float dt)
 	XMStoreFloat4x4(&mView, v);
 }
 
-void D3DBoxApp::DrawScene()
+void D3DHillApp::DrawScene()
 {
 	m_d3dImmediateContext->IASetInputLayout(mInputLayout);
 	m_d3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -111,17 +111,17 @@ void D3DBoxApp::DrawScene()
 	HR(m_SwapChain->Present(0, 0), L"SwapChain");
 }
 
-void D3DBoxApp::OnMouseDown(WPARAM btnState, int x, int y)
+void D3DHillApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	SetCapture(m_hMainWnd);
 }
-void D3DBoxApp::OnMouseUp(WPARAM btnState, int x, int y)
+void D3DHillApp::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
 }
-void D3DBoxApp::OnMouseMove(WPARAM btnState, int x, int y)
+void D3DHillApp::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{
@@ -146,7 +146,7 @@ void D3DBoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 	mLastMousePos.y = y;
 }
 
-void D3DBoxApp::BuildGemetryBuffers()
+void D3DHillApp::BuildGemetryBuffers()
 {
 	 Vertex vertices[] =
     {
@@ -244,7 +244,7 @@ void D3DBoxApp::BuildGemetryBuffers()
 		 L"Create Index Buffer");
 }
 
-void D3DBoxApp::BuildVertexLayout()
+void D3DHillApp::BuildVertexLayout()
 {
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
@@ -261,7 +261,7 @@ void D3DBoxApp::BuildVertexLayout()
 		L"Create Input Layout");
 }
 
-void D3DBoxApp::LoadShader()
+void D3DHillApp::LoadShader()
 {
 	DWORD shaderFlags = 0;
 #if defined( DEBUG ) || defined( _DEBUG )
@@ -292,7 +292,7 @@ void D3DBoxApp::LoadShader()
 		L"Create Vertex Shader");
 }
 
-void D3DBoxApp::BuildRasterState()
+void D3DHillApp::BuildRasterState()
 {
 	D3D11_RASTERIZER_DESC rs;
 	memset(&rs, 0, sizeof(rs));

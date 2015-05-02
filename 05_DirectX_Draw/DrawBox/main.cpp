@@ -3,7 +3,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 				   PSTR cmdLine, int showCmd)
 {
-	D3DBoxApp theApp(hInstance);
+	D3DHillApp theApp(hInstance);
 	
 	if( !theApp.Init() )
 		return 0;
