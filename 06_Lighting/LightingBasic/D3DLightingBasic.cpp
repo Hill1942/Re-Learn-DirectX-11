@@ -13,8 +13,8 @@ D3DLightingBasic::D3DLightingBasic(HINSTANCE hInstance)
 	 mWaveVB(0),
 	 mInputLayout(0),
 	 mEyePosW(0.0f, 0.0f, 0.0f),
-	 mTheta(1.5f * 3.14f),
-	 mPhi(0.1f * 3.14f),
+	 mTheta(1.5f * MathHelper::PI),
+	 mPhi(0.1f * MathHelper::PI),
 	 mRadius(80.0f)
 {
 	m_MainWndCaption = L"D3DLightingBasic";
