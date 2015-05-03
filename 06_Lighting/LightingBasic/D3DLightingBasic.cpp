@@ -216,6 +216,12 @@ void D3DLightingBasic::DrawScene()
 
 
 
+	cbLightingObjectPS.gMaterial = mWaveMaterial;
+	mCBLightingObject.Data = cbLightingObjectPS;
+	mCBLightingObject.Apply(m_d3dImmediateContext);
+	bufferPS = mCBLightingObject.Buffer();
+	m_d3dImmediateContext->PSSetConstantBuffers(0, 1, &bufferPS);
+
 	world             = XMLoadFloat4x4(&mWaveWorld);
 	worldInvTranspose = MathHelper::InverseTranspose(world);
 	worldViewProj     = XMMatrixTranspose(world * view * proj);
