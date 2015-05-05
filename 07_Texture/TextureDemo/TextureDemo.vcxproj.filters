@@ -69,14 +69,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="LightingBasicPS.hlsl">
+    <FxCompile Include="TextureDemoPS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="LightingBasicVS.hlsl">
+    <FxCompile Include="TextureDemoVS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

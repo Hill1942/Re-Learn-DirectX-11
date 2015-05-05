@@ -193,12 +193,21 @@ void ComputeSpotLight(Material mat, SpotLight L, float3 pos, float3 normal, floa
 
 
 
-cbuffer CVObjectLighting
+Texture2D gDiffuseMap: register(t1);
+
+SamplerState samAnisotropic
+{
+	Filter = ANISOTROPIC;
+	MaxAnisotropy = 4;
+
+	AddressU = WRAP;
+	AddressV = WRAP;
+};
+
+cbuffer CVObjectPS: register(b0)
 {
 	Material         gMaterial;
-	DirectionalLight gDirLight;
-	PointLight       gPointLight;
-	SpotLight        gSpotLight;
+	DirectionalLight gDirLights[3];
 	float3           gEyePosW;
 };
 
@@ -207,8 +216,10 @@ struct VertexOut
 	float4 PosH    : SV_POSITION;
 	float3 PosW    : POSITION;
 	float3 NormalW : NORMAL;
+	float2 Tex     : TEXCOORD;
 };
 
+/*
 float4 main(VertexOut pin) : SV_TARGET
 {
 	pin.NormalW   = normalize(pin.NormalW);
@@ -236,11 +247,49 @@ float4 main(VertexOut pin) : SV_TARGET
 	diffuse += D;
 	spec    += S;
 	   
-	float4 litColor = ambient + diffuse + spec;
+	float4 texColor = float4(1, 1, 1, 1);
+	texColor = gDiffuseMap.Sample(samAnisotropic, pin.Tex);
+
+	float4 litColor = texColor * (ambient + diffuse) + spec;
 
 	// Common to take alpha from diffuse material.
-	litColor.a = gMaterial.Diffuse.a;
+	litColor.a = gMaterial.Diffuse.a * texColor.a;
 
     return litColor;
-}
+}*/
 
+float4 main(VertexOut pin) : SV_TARGET
+{
+	pin.NormalW = normalize(pin.NormalW);
+	float3 toEye = gEyePosW - pin.PosW;
+
+	float distToEye = length(toEye);
+	toEye /= distToEye;
+
+
+	float4 texColor = float4(1, 1, 1, 1);
+	texColor = gDiffuseMap.Sample( samAnisotropic, pin.Tex );
+
+	float4 litColor = texColor;
+	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 spec    = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Sum the light contribution from each light source.  
+	[unroll]
+	for(int i = 0; i < 3; ++i)
+	{
+		float4 A, D, S;
+		ComputeDirectionalLight(gMaterial, gDirLights[i], pin.NormalW, toEye, 
+			A, D, S);
+
+		ambient += A;
+		diffuse += D;
+		spec    += S;
+	}
+
+	litColor   = texColor*(ambient + diffuse) + spec;
+	litColor.a = gMaterial.Diffuse.a * texColor.a;
+
+	return litColor;
+}

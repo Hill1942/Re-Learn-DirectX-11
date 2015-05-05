@@ -11,21 +11,21 @@ struct Vertex
 {
 	XMFLOAT3 Pos;
 	XMFLOAT3 Normal;
+	XMFLOAT2 Tex;
 };
 
-struct CBObject
+struct CBObjectVS
 {
 	XMFLOAT4X4 gWorld;
 	XMFLOAT4X4 gWorldInvTranspose;
 	XMFLOAT4X4 gWorldViewProj;
+	XMFLOAT4X4 gTexTransform;
 };
 
-struct CBLightingObject
+struct CBObjectPS
 {
 	Material         gMaterial;
-	DirectionalLight gDirLight;
-	PointLight       gPointLight;
-	SpotLight        gSpotLight;
+	DirectionalLight gDirLights[3];
 	XMFLOAT3         gEyePosW;
 };
 
@@ -54,8 +54,8 @@ private:
 	float    GetHillHeight(float x, float z) const;
 	XMFLOAT3 GetHillNormal(float x, float z) const;
 private:
-	ConstantBuffer<CBObject> mCBObject;
-	ConstantBuffer<CBLightingObject> mCBLightingObject;
+	ConstantBuffer<CBObjectVS> mCBObject;
+	ConstantBuffer<CBObjectPS> mCBLightingObject;
 
 	ID3D11Buffer*          mLandVB;
 	ID3D11Buffer*          mLandIB;
@@ -73,9 +73,10 @@ private:
 	ID3D11ShaderResourceView* mWavesMapSRV;
 
 	Waves                  mWaves;
-	DirectionalLight       mDirectLight;
-	PointLight             mPointLight;
-	SpotLight              mSpotLight;
+	DirectionalLight       mDirLights[3];
+	//DirectionalLight       mDirectLight;
+	//PointLight             mPointLight;
+	//SpotLight              mSpotLight;
 	Material               mLandMaterial;
 	Material               mWaveMaterial;
 

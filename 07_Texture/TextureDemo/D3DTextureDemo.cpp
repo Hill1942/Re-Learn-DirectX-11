@@ -35,34 +35,28 @@ D3DTextureDemo::D3DTextureDemo(HINSTANCE hInstance)
 	XMMATRIX grassTexScale = XMMatrixScaling(5.0f, 5.0f, 0.0f);
 	XMStoreFloat4x4(&mGrassTexTransform, grassTexScale);
 
-	// Directional light.
-	mDirectLight.Ambient   = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mDirectLight.Diffuse   = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mDirectLight.Specular  = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mDirectLight.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
- 
-	// Point light--position is changed every frame to animate in UpdateScene function.
-	mPointLight.Ambient    = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mPointLight.Diffuse    = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	mPointLight.Specular   = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	mPointLight.Att        = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	mPointLight.Range      = 25.0f;
+	mDirLights[0].Ambient  = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mDirLights[0].Diffuse  = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mDirLights[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mDirLights[0].Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
 
-	// Spot light--position and direction changed every frame to animate in UpdateScene function.
-	mSpotLight.Ambient     = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	mSpotLight.Diffuse     = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
-	mSpotLight.Specular    = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mSpotLight.Att         = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	mSpotLight.Spot        = 96.0f;
-	mSpotLight.Range       = 10000.0f;
+	mDirLights[1].Ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	mDirLights[1].Diffuse  = XMFLOAT4(0.20f, 0.20f, 0.20f, 1.0f);
+	mDirLights[1].Specular = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+	mDirLights[1].Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
 
-	mLandMaterial.Ambient  = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
-	mLandMaterial.Diffuse  = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+	mDirLights[2].Ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	mDirLights[2].Diffuse  = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mDirLights[2].Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	mDirLights[2].Direction = XMFLOAT3(0.0f, -0.707f, -0.707f);
+
+	mLandMaterial.Ambient  = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mLandMaterial.Diffuse  = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	mLandMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 
-	mWaveMaterial.Ambient  = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
-	mWaveMaterial.Diffuse  = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
-	mWaveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 96.0f);
+	mWaveMaterial.Ambient  = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mWaveMaterial.Diffuse  = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	mWaveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f);
 }
 
 
@@ -96,13 +90,21 @@ bool D3DTextureDemo::Init()
 	//HR(D3DX11CreateShaderResourceViewFromFile(
 	HR(CreateDDSTextureFromFile(
 		m_d3dDevice,
-		L"ddd",
+		L"Texture/grass.dds",
 		0,
 		&mGrassMapSRV,
 		0,
 		nullptr),
-		L"Create DDS texture");
+		L"Create DDS grass texture");
 
+	HR(CreateDDSTextureFromFile(
+		m_d3dDevice,
+		L"Texture/water2.dds",
+		0,
+		&mWavesMapSRV,
+		0,
+		nullptr),
+		L"Create DDS wave texture");
 
 	return true;
 }
@@ -159,28 +161,17 @@ void D3DTextureDemo::UpdateScene(float dt)
 	{
 		v[i].Pos    = mWaves[i];
 		v[i].Normal = mWaves.Normal(i);
+		v[i].Tex.x  = 0.5f + mWaves[i].x / mWaves.Width();
+		v[i].Tex.y  = 0.5f - mWaves[i].z / mWaves.Depth();
 	}
 
 	m_d3dImmediateContext->Unmap(mWaveVB, 0);
 
-	//
-	// Animate the lights.
-	//
-
-	// Circle light over the land surface.
-	mPointLight.Position.x = 70.0f*cosf( 0.2f*m_Timer.TotalTime() );
-	mPointLight.Position.z = 70.0f*sinf( 0.2f*m_Timer.TotalTime() );
-	mPointLight.Position.y = MathHelper::Max(
-		GetHillHeight(mPointLight.Position.x, mPointLight.Position.z), 
-		-3.0f)
-		+ 10.0f;
-
-
-	// The spotlight takes on the camera position and is aimed in the
-	// same direction the camera is looking.  In this way, it looks
-	// like we are holding a flashlight.
-	mSpotLight.Position = mEyePosW;
-	XMStoreFloat3(&mSpotLight.Direction, XMVector3Normalize(target - pos));
+	XMMATRIX wavesScale = XMMatrixScaling(5.0f, 5.0f, 0.0f);
+	mWaterTexOffset.y += 0.05f * dt;
+	mWaterTexOffset.x += 0.1f  * dt;	
+	XMMATRIX wavesOffset = XMMatrixTranslation(mWaterTexOffset.x, mWaterTexOffset.y, 0.0f);
+	XMStoreFloat4x4(&mWaterTexTransform, wavesScale*wavesOffset);
 }
 
 void D3DTextureDemo::DrawScene()
@@ -207,24 +198,27 @@ void D3DTextureDemo::DrawScene()
 	XMMATRIX proj  = XMLoadFloat4x4(&mProj);
 	XMMATRIX viewProj = view*proj;
 
-	CBLightingObject cbLightingObjectPS;
-	cbLightingObjectPS.gMaterial = mLandMaterial;
-	cbLightingObjectPS.gDirLight = mDirectLight;
-	cbLightingObjectPS.gPointLight = mPointLight;
-	cbLightingObjectPS.gSpotLight = mSpotLight;
-	cbLightingObjectPS.gEyePosW   = mEyePosW;
-	mCBLightingObject.Data = cbLightingObjectPS;
+	CBObjectPS cbObjectPS;
+	cbObjectPS.gMaterial = mLandMaterial;
+	cbObjectPS.gDirLights[0] = mDirLights[0];
+	cbObjectPS.gDirLights[1] = mDirLights[1];
+	cbObjectPS.gDirLights[2] = mDirLights[2];
+	cbObjectPS.gEyePosW   = mEyePosW;
+	mCBLightingObject.Data = cbObjectPS;
 	mCBLightingObject.Apply(m_d3dImmediateContext);
 	auto bufferPS = mCBLightingObject.Buffer();
 	m_d3dImmediateContext->PSSetConstantBuffers(0, 1, &bufferPS);
+	m_d3dImmediateContext->PSSetShaderResources(1, 1, &mGrassMapSRV);
 
 	XMMATRIX world             = XMLoadFloat4x4(&mLandWorld);
 	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
 	XMMATRIX worldViewProj     = XMMatrixTranspose(world * view * proj);
-	CBObject cbObjectVS;
+	XMMATRIX texTransform = XMLoadFloat4x4(&mGrassTexTransform);
+	CBObjectVS cbObjectVS;
 	XMStoreFloat4x4(&cbObjectVS.gWorld, world);
 	XMStoreFloat4x4(&cbObjectVS.gWorldInvTranspose, worldInvTranspose);
 	XMStoreFloat4x4(&cbObjectVS.gWorldViewProj, worldViewProj);
+	XMStoreFloat4x4(&cbObjectVS.gTexTransform, texTransform);
 	mCBObject.Data = cbObjectVS;
 	mCBObject.Apply(m_d3dImmediateContext);
 	auto bufferVS = mCBObject.Buffer();
@@ -236,18 +230,21 @@ void D3DTextureDemo::DrawScene()
 
 
 
-	cbLightingObjectPS.gMaterial = mWaveMaterial;
-	mCBLightingObject.Data = cbLightingObjectPS;
+	cbObjectPS.gMaterial = mWaveMaterial;
+	mCBLightingObject.Data = cbObjectPS;
 	mCBLightingObject.Apply(m_d3dImmediateContext);
 	bufferPS = mCBLightingObject.Buffer();
 	m_d3dImmediateContext->PSSetConstantBuffers(0, 1, &bufferPS);
+	m_d3dImmediateContext->PSSetShaderResources(1, 1, &mWavesMapSRV);
 
 	world             = XMLoadFloat4x4(&mWaveWorld);
 	worldInvTranspose = MathHelper::InverseTranspose(world);
 	worldViewProj     = XMMatrixTranspose(world * view * proj);
+	texTransform      = XMLoadFloat4x4(&mWaterTexTransform);
 	XMStoreFloat4x4(&cbObjectVS.gWorld, world);
 	XMStoreFloat4x4(&cbObjectVS.gWorldInvTranspose, worldInvTranspose);
 	XMStoreFloat4x4(&cbObjectVS.gWorldViewProj, worldViewProj);
+	XMStoreFloat4x4(&cbObjectVS.gTexTransform, texTransform);
 	mCBObject.Data = cbObjectVS;
 	mCBObject.Apply(m_d3dImmediateContext);
 	bufferVS = mCBObject.Buffer();
@@ -311,6 +308,7 @@ void D3DTextureDemo::BuildLandGemetryBuffers()
 		
 		vertices[i].Pos    = p;
 		vertices[i].Normal = GetHillNormal(p.x, p.z);
+		vertices[i].Tex    = grid.Vertices[i].TexC;
 	}
 
 	D3D11_BUFFER_DESC vbd;
@@ -408,12 +406,13 @@ void D3DTextureDemo::BuildVertexLayout()
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	HR(m_d3dDevice->CreateInputLayout(
 		vertexDesc,
-		2, 
+		3, 
 		mVSBlob->GetBufferPointer(),
 		mVSBlob->GetBufferSize(),
 		&mInputLayout),
