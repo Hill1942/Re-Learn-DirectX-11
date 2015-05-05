@@ -3,6 +3,7 @@
 *.suo
 *.vcxproj.user
 *.cso
+*.config
 
 */Debug
 */*/Debug
