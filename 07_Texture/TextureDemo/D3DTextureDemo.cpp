@@ -161,8 +161,6 @@ void D3DTextureDemo::UpdateScene(float dt)
 		v[i].Normal = mWaves.Normal(i);
 	}
 
-
-
 	m_d3dImmediateContext->Unmap(mWaveVB, 0);
 
 	//
