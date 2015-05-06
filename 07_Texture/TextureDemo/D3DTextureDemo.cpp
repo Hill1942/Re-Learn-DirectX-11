@@ -17,8 +17,8 @@ D3DTextureDemo::D3DTextureDemo(HINSTANCE hInstance)
 	 mWaterTexOffset(0.0f, 0.0f),
 	 mInputLayout(0),
 	 mEyePosW(0.0f, 0.0f, 0.0f),
-	 mTheta(1.5f * MathHelper::PI),
-	 mPhi(0.1f * MathHelper::PI),
+	 mTheta(1.3f * MathHelper::PI),
+	 mPhi(0.4f * MathHelper::PI),
 	 mRadius(80.0f)
 {
 	m_MainWndCaption = L"D3DTextureDemo";

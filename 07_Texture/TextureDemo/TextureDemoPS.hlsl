@@ -204,7 +204,7 @@ SamplerState samAnisotropic
 	AddressV = WRAP;
 };
 
-cbuffer CVObjectPS: register(b0)
+cbuffer CBObjectPS: register(b0)
 {
 	Material         gMaterial;
 	DirectionalLight gDirLights[3];
@@ -289,6 +289,7 @@ float4 main(VertexOut pin) : SV_TARGET
 	}
 
 	litColor   = texColor*(ambient + diffuse) + spec;
+	//litColor = ambient + diffuse + spec;
 	litColor.a = gMaterial.Diffuse.a * texColor.a;
 
 	return litColor;
